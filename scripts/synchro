@@ -1,0 +1,75 @@
+#! /usr/bin/python
+import rospy
+# ROS Image message
+from sensor_msgs.msg import Image
+from sensor_msgs.msg import NavSatFix
+# ROS Image message -> OpenCV2 image converter
+from cv_bridge import CvBridge, CvBridgeError
+# OpenCV2 for saving an image
+import cv2
+import os
+from datetime import datetime
+import time
+
+# Instantiate CvBridge
+bridge = CvBridge()
+
+class Position():
+    Lat = "0"
+    Long = "0"
+    Alt = "0"
+
+def image_callback(msg):
+    #print "Received image "
+    try:
+        # Convert your ROS Image message to OpenCV2
+        cv2_img = bridge.imgmsg_to_cv2(msg, "bgr8")
+    except CvBridgeError, e:
+        print(e)
+    else:
+        # Save your OpenCV2 image as a jpeg 
+        imagename = str(time.time() - start) + '.jpeg'
+        cv2.imwrite(imagename, cv2_img)
+        # Write GPS data to jpeg through exiftool
+        my_exif_command = str('exiftool -GPSLongitude="' + Position.Long + '" -GPSLatitude="' + Position.Lat + '" -overwrite_original -q ' + imagename)
+	#print(Position.Lat)
+        #print(Position.Long)
+        os.system(my_exif_command)
+
+
+def gps_callback(msg):
+    #print "gps found"
+
+    msg_str = str(msg)
+    lat = msg_str.find("latitude: ")
+    lon = msg_str.find("longitude: ")
+    for item in msg_str.split("\n"):
+        if "latitude: " in item:
+            #print item.strip()
+            Position.Lat = item.partition(": ")[2]
+            #print(latitude)
+        elif "longitude: " in item:
+            #print item.strip()
+            Position.Long = item.partition(" ")[2]
+    #print(latitude)
+    #print(longitude)
+    #Position(
+    
+
+def main():
+    rospy.init_node('image_listener')
+    rospy.Subscriber("/thermalcam/image_raw", Image, image_callback)
+    #rospy.init_node('gps_listener')
+    rospy.Subscriber("/mavros/global_position/global", NavSatFix, gps_callback)
+    rospy.spin()
+
+if __name__ == '__main__':
+    timevar = str(datetime.now())
+    mypath = os.path.join("/home/kspons/Pictures/thermalnow", timevar)
+    print os.path.abspath("camera_image.jpeg")
+    os.makedirs(mypath)
+    os.chdir(mypath)
+    mystring = "\nImages are being saved at " + mypath + "\nPress Ctrl+Z to exit"
+    print(mystring)
+    start = time.time()
+    main()

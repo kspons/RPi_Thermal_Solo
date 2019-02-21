@@ -1,0 +1,29 @@
+<?xml version="1.0"?>
+<package>
+  <name>thermalcam</name>
+  <version>0.0.0</version>
+  <description>This package uses the ThermApp camera mounted on a 3DR Solo</description>
+
+  <maintainer email="kspons@tamu.edu">kspons</maintainer>
+
+  <license>TODO</license>
+
+  <url type="website">http://unmanned.tamu.edu</url>
+
+  <buildtool_depend>catkin</buildtool_depend>
+  <build_depend>cv_bridge</build_depend>
+  <build_depend>mavros</build_depend>
+  <build_depend>roscpp</build_depend>
+  <build_depend>rospy</build_depend>
+  <build_depend>sensor_msgs</build_depend>
+  <build_depend>std_msgs</build_depend>
+  <run_depend>cv_bridge</run_depend>
+  <run_depend>mavros</run_depend>
+  <run_depend>roscpp</run_depend>
+  <run_depend>rospy</run_depend>
+  <run_depend>sensor_msgs</run_depend>
+  <run_depend>std_msgs</run_depend>
+
+  <export>
+  </export>
+</package>

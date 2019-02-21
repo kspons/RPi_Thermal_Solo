@@ -1,0 +1,46 @@
+#! /usr/bin/python
+import rospy
+from sensor_msgs.msg import Image
+from sensor_msgs.msg import NavSatFix
+from cv_bridge import CvBridge, CvBridgeError
+import cv2
+import os
+from datetime import datetime
+import subprocess
+import time
+from shutil import copyfile
+# Instantiate CvBridge
+bridge = CvBridge()
+
+def image_callback(msg):
+    try:
+        # Convert your ROS Image message to OpenCV2
+        cv2_img = bridge.imgmsg_to_cv2(msg, "8UC1")
+    except CvBridgeError, e:
+        print(e)
+    else:
+        # Save your OpenCV2 image as a jpeg 
+        imagename = str(rospy.get_rostime()) + '.jpeg'
+        cv2.imwrite(imagename, cv2_img)
+
+def main():
+    rospy.init_node('therm_saver')
+    rospy.Subscriber("/thermalcam/image_raw", Image, image_callback)
+    rospy.spin()
+
+if __name__ == '__main__':
+    timevar = str(datetime.now().strftime("%m-%d_%H:%M:%S"))
+    mypath = os.path.join("/home/kspons/Pictures/therm_imgs", timevar)
+    os.makedirs(mypath)
+    os.chdir(mypath)
+    mystring = "\nImages are being saved at " + mypath + "\nPress Ctrl+C to exit"
+    print(mystring)
+    start = time.time()
+    main()
+
+def make_video():
+	copyfile('/home/kspons/Desktop/Run/make_video', mypath+'/make_video')
+	subprocess.call(["chmod", "+x", mypath+'/make_video'])
+	print '\n'
+	
+rospy.on_shutdown(make_video)

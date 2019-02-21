@@ -1,0 +1,66 @@
+#! /usr/bin/env python2
+# -*- coding: utf-8 -*-
+"""
+
+Copyright (c) 2015 PAL Robotics SL.
+Released under the BSD License.
+
+Created on 7/14/15
+
+@author: Sammy Pfeiffer
+
+test_video_resource.py contains
+a testing code to see if opencv can open a video stream
+useful to debug if video_stream does not work
+"""
+# This publishes the thermal camera to ROS
+
+import sys
+import rospy
+from sensor_msgs.msg import Image
+import cv2
+import numpy as np
+from cv_bridge import CvBridge, CvBridgeError
+
+if __name__ == '__main__':
+    pub = rospy.Publisher('thermalcam/image_raw', Image, queue_size=1)
+    rospy.init_node('thermalcam_pub', anonymous=True)
+    rate = rospy.Rate(60)
+    bridge = CvBridge()
+    if len(sys.argv) < 2:
+        print "You must give an argument to open a video stream."
+        print "  It can be a number as video device, e.g.: 0 would be /dev/video0"
+        print "  It can be a url of a stream,        e.g.: rtsp://wowzaec2demo.streamlock.net/vod/mp4:BigBuckBunny_115k.mov"
+        print "  It can be a video file,             e.g.: myvideo.mkv"
+        exit(0)
+
+    resource = sys.argv[1]
+    # If we are given just a number, interpret it as a video device
+    if len(resource) < 3:
+        resource_name = "/dev/video" + resource
+        resource = int(resource)
+    else:
+        resource_name = resource
+    print "Trying to open resource: " + resource_name
+    cap = cv2.VideoCapture(resource)
+    if not cap.isOpened():
+        print "Error opening resource: " + str(resource)
+        print "Maybe opencv VideoCapture can't open it"
+        exit(0)
+
+    print "Correctly opened resource, to view feed use \nrosrun image_view image_view image:=/thermalcam/image_raw"
+    
+    while not rospy.is_shutdown():
+		rval, frame = cap.read()
+		if rval:
+			#Make the image grayscale
+			frame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+			#Rotate thermal image so that it's upright
+			rotatedimg = np.rot90(frame, 2)
+			#convert the opencv img to ros img msg
+			msg = bridge.cv2_to_imgmsg(rotatedimg, encoding="mono8")
+			#publish the thermal img as ros img msg
+			pub.publish(msg)
+		rate.sleep
+
+

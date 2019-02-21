@@ -1,0 +1,31 @@
+#! /usr/bin/python
+import rospy
+from sensor_msgs.msg import Image
+from sensor_msgs.msg import NavSatFix
+import os
+from datetime import datetime
+import time
+
+
+def gps_callback(msg):
+    #print "gps found"
+    mylog = open("gps.txt", "a")
+    timestring = "\nROS_time: " + str(rospy.get_rostime()) + "\n"
+    mylog.write(timestring)
+    mylog.write(str(msg))
+    mylog.close
+
+def main():
+    rospy.init_node('gps_listener')
+    rospy.Subscriber("/mavros/global_position/global", NavSatFix, gps_callback)
+    rospy.spin()
+
+if __name__ == '__main__':
+    timevar = str(datetime.now())
+    mypath = os.path.join("/home/kspons/Pictures/thermalnow", timevar)
+    os.makedirs(mypath)
+    os.chdir(mypath)
+    mystring = "\nGPS log is being saved at " + mypath + "\nPress Ctrl+C to exit"
+    print(mystring)
+    start = time.time()
+    main()
