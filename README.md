@@ -1,14 +1,26 @@
-# thermalcam
+# rpi_thermal_solo
 
-### This is a ros package for using the ThermApp camera on a 3DR Solo.
+### Overview
+
+This is a ros package for using the ThermApp camera on a 3DR Solo.
+
+**Author: Keith Sponsler
+Affiliation: [Unmanned Systems Laboratory](https://unmanned.tamu.edu/)**
+
+rpi_thermal_solo has been tested under [ROS] kinetic and ubuntu-mate for rpi. This is research code and it changes frequently.
+
 ### This package also includes support for point grey cameras and GPS logging
 
-# Dependencies
-MAVROS
+#### Dependencies
+
+- [Robot Operating System (ROS)](http://wiki.ros.org) (middleware for robotics)
+- [MAVROS] (MAVLink extendable communication node for ROS with proxy for Ground Control Station.)
+- [v4l2loopback](https://github.com/Pidbip/ThermAppCam/tree/master/thermapp) (allows the ThermApp cam to stream)
+
 
 # Setup
 This package requires use of v4l2loopback and ThermAppCam 
-First, download and install v4l2loopback from https://github.com/umlaeute/v4l2loopback
+First, download and install [v4l2loopback](https://github.com/Pidbip/ThermAppCam/tree/master/thermapp)
 Second, download and build thermapp from https://github.com/Pidbip/ThermAppCam/tree/master/thermapp
 Make sure that thermapp is working and you can see a live feed from the Thermapp camera. To do this, use
 ```
