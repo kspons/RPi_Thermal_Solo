@@ -1,7 +1,11 @@
 # thermalcam
 
-# This is a ros package for using the ThermApp camera on a 3DR Solo.
-# This package also includes support for point grey cameras and GPS logging
+### This is a ros package for using the ThermApp camera on a 3DR Solo.
+### This package also includes support for point grey cameras and GPS logging
+
+# Dependencies
+MAVROS
+
 # Setup
 This package requires use of v4l2loopback and ThermAppCam 
 First, download and install v4l2loopback from https://github.com/umlaeute/v4l2loopback

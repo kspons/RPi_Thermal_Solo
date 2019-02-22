@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <package>
-  <name>thermalcam</name>
+  <name>rpi_thermal_solo</name>
   <version>0.0.0</version>
   <description>This package uses the ThermApp camera mounted on a 3DR Solo</description>
 
